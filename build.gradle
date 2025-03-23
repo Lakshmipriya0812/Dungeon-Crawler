@@ -1,0 +1,53 @@
+plugins {
+    id 'info.solidsoft.pitest' version '1.9.0'
+    id 'java'
+    id 'idea'
+    id 'jacoco'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation("io.cucumber:cucumber-java:latest.release") {
+        because("we want to use Cucumber JVM")
+    }
+    testImplementation("io.cucumber:cucumber-junit-platform-engine:latest.release") {
+        because("we want to use Cucumber with JUnit 5")
+    }
+    testImplementation("org.junit.platform:junit-platform-suite:latest.release") {
+        because("we want to use the JUnit 5 @Suite annotation to select/run Cucumber tests")
+    }
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:5.9.0"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
+    testImplementation 'org.mockito:mockito-core:4.0.0'
+    testImplementation 'org.hamcrest:hamcrest-all:1.3'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+    exclude "**/*UITest.*"
+
+}
+
+
+pitest {
+    targetClasses = ['engine.*', 'launcher.*', 'main.*', 'parser.*',
+                     'tiles.*', 'ui.*', 'values.*', 'wrappers.*']
+    targetTests = ['engine.*', 'launcher.*', 'main.*', 'parser.*', 'tiles.*',
+                   'ui.*', 'values.*', 'wrappers.*']
+    testSourceSets = [sourceSets.test]
+    mainSourceSets = [sourceSets.main]
+    pitestVersion = '1.9.0'
+    junit5PluginVersion = '1.2.0'
+    outputFormats = ['XML', 'HTML']
+
+}
